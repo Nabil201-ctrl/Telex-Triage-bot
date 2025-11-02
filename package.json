@@ -4,17 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "mastra dev",
-    "build": "tsc && mastra build",
-    "start": "node dist/server/a2a-server.js",
-    "server": "tsx server/a2a-server.ts",
-    "clean": "rm -rf dist",
-    "build:full": "npm run clean && npm run build"
-  },
+    "dev": "tsx server/a2a-server.ts",
+    "build": "tsc",
+    "start": "node dist/server/a2a-server.js"
+  }
+,
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
+  "type": "commonjs",
   "engines": {
     "node": ">=20.9.0"
   },
