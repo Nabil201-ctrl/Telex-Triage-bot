@@ -1,9 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import { mastra } from '../src/mastra';
+import dotnev from 'dotenv';
+dotnev.config();
 
 const app = express();
-const port = process.env.SERVER_PORT || 3001;
+const port = Number(process.env.SERVER_PORT) || 3000;
+
 
 // Middleware
 app.use(cors());
@@ -46,6 +49,11 @@ function fallbackTriageAnalysis(message: string) {
         keywords_found: [...foundHigh, ...foundMedium, ...foundLow]
     };
 }
+
+/* For LeapCell */
+app.get("/kaithhealth", (req, res) => {
+    res.status(200).send("OK");
+});
 
 // A2A Endpoint for Support Triage Agent
 app.post('/a2a/agent/supportTriageAgent', async (req, res) => {
@@ -162,7 +170,6 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Root endpoint
 app.get('/', (req, res) => {
     res.json({
         message: 'Support Triage Bot A2A Server',
@@ -174,7 +181,7 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log(`Mastra A2A Server running on port ${port}`);
     console.log(`A2A Endpoint: http://localhost:${port}/a2a/agent/supportTriageAgent`);
     console.log(`Health check: http://localhost:${port}/health`);
