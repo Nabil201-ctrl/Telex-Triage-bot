@@ -3,14 +3,12 @@ import cors from 'cors';
 import { mastra } from '../src/mastra';
 
 const app = express();
-const port = process.env.SERVER_PORT || 3001; // Use different port to avoid conflict
+const port = process.env.SERVER_PORT || 3001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-
-// Add this function to your server file
 function fallbackTriageAnalysis(message: string) {
     const lowerMessage = message.toLowerCase();
 
@@ -52,7 +50,7 @@ function fallbackTriageAnalysis(message: string) {
 // A2A Endpoint for Support Triage Agent
 app.post('/a2a/agent/supportTriageAgent', async (req, res) => {
     try {
-        console.log('📨 Received A2A request');
+        console.log(' Received A2A request');
 
         const { messages } = req.body;
 
@@ -74,7 +72,7 @@ app.post('/a2a/agent/supportTriageAgent', async (req, res) => {
             });
         }
 
-        console.log('🤖 Processing message:', userMessage);
+        console.log('Processing message:', userMessage);
 
         // Get the support triage agent
         const agent = mastra.getAgent('supportTriageAgent');
@@ -90,15 +88,15 @@ app.post('/a2a/agent/supportTriageAgent', async (req, res) => {
             }
         ]);
 
-        console.log('✅ Raw agent response:', response.text);
+        console.log('Raw agent response:', response.text);
 
         // Parse JSON response
         let triageResult;
         try {
             triageResult = JSON.parse(response.text);
-            console.log('✅ Successfully parsed JSON');
+            console.log('Successfully parsed JSON');
         } catch (parseError) {
-            console.error('❌ Failed to parse agent response as JSON:', response.text);
+            console.error('Failed to parse agent response as JSON:', response.text);
             console.log('Response type:', typeof response.text);
 
             // Try to extract JSON if it's wrapped in other text
@@ -106,7 +104,7 @@ app.post('/a2a/agent/supportTriageAgent', async (req, res) => {
                 const jsonMatch = response.text.match(/\{[\s\S]*\}/);
                 if (jsonMatch) {
                     triageResult = JSON.parse(jsonMatch[0]);
-                    console.log('✅ Extracted JSON from text');
+                    console.log('Extracted JSON from text');
                 } else {
                     throw new Error('No JSON found in response');
                 }
@@ -128,11 +126,11 @@ app.post('/a2a/agent/supportTriageAgent', async (req, res) => {
             }
         };
 
-        console.log('📤 Sending response to Telex:', triageResult);
+        console.log('Sending response to Telex:', triageResult);
         res.json(telexResponse);
 
     } catch (error) {
-        console.error('💥 Error in supportTriageAgent:', error);
+        console.error('Error in supportTriageAgent:', error);
 
         const errorResponse = {
             type: 'agent_response',
@@ -177,10 +175,10 @@ app.get('/', (req, res) => {
 
 // Start server
 app.listen(port, () => {
-    console.log(`🚀 Mastra A2A Server running on port ${port}`);
-    console.log(`📡 A2A Endpoint: http://localhost:${port}/a2a/agent/supportTriageAgent`);
-    console.log(`❤️  Health check: http://localhost:${port}/health`);
-    console.log(`🏠 Root: http://localhost:${port}/`);
+    console.log(`Mastra A2A Server running on port ${port}`);
+    console.log(`A2A Endpoint: http://localhost:${port}/a2a/agent/supportTriageAgent`);
+    console.log(`Health check: http://localhost:${port}/health`);
+    console.log(`Root: http://localhost:${port}/`);
 });
 
 export default app;

@@ -98,6 +98,20 @@ To get started with the project, follow these steps:
     npm run dev
     ```
 
+## Docker
+
+To build and run the application using Docker, follow these steps:
+
+1.  **Build the Docker image**:
+    ```bash
+    docker build -t telex-bot .
+    ```
+2.  **Run the Docker container**:
+    ```bash
+    docker run -p 8080:8080 telex-bot
+    ```
+    The application will be accessible on `http://localhost:8080`.
+
 ## Testing
 
 To test the bot, you can use Postman to send requests to the A2A endpoint. The `GEMINI.md` file provides example JSON payloads for different priority levels.

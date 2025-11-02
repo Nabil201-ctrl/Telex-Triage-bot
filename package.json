@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "mastra dev",
     "build": "mastra build",
-    "start": "mastra start"
+    "start": "node dist/server/a2a-server.ts",
+    "server": "node --loader tsx server/a2a-server.ts",
+    "server:dev": "npx tsx server/a2a-server.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -33,6 +36,7 @@
   "devDependencies": {
     "@types/node": "^24.9.2",
     "mastra": "^0.17.7",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
 }
