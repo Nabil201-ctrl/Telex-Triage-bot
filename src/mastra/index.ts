@@ -1,36 +1,42 @@
+import dotenv from 'dotenv';
+dotenv.config(); // ✅ must come first
+
 import { Mastra } from '@mastra/core/mastra';
 import { PinoLogger } from '@mastra/loggers';
 import { LibSQLStore } from '@mastra/libsql';
 import { supportTriageAgent } from './agents/support-triage-agent';
 import { supportWorkflow } from './workflows/support-workflow';
 import { scorers as supportScorers } from './scorers/support-scorer';
-import('../../server/a2a-server').catch(console.error);
-import dotenv from 'dotenv';
-dotenv.config();
 
-// Fix for telemetry warning
+// Make sure this import runs AFTER Mastra is defined
+import('../../server/a2a-server').catch(console.error);
+
 export const mastra = new Mastra({
   workflows: {
-    supportWorkflow
+    supportWorkflow,
   },
   agents: {
-    supportTriageAgent
+    supportTriageAgent,
   },
   scorers: {
-    ...supportScorers
+    ...supportScorers,
   },
   storage: new LibSQLStore({
-    // Use absolute path or ensure directory exists
-    url: process.env.NODE_ENV === 'production'
-      ? process.env.LIBSQL_URL!
-      : 'file:./mastra.db', // Simplified path
+    url:
+      process.env.NODE_ENV === 'production'
+        ? process.env.LIBSQL_URL!
+        : 'file:./mastra.db', // fallback for dev
+    authToken:
+      process.env.NODE_ENV === 'production'
+        ? process.env.LIBSQL_AUTH_TOKEN!  // ✅ added this line
+        : undefined,
   }),
   logger: new PinoLogger({
     name: 'Mastra',
     level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
   }),
   telemetry: {
-    enabled: false, // Explicitly disable telemetry
+    enabled: false,
   },
   observability: {
     default: { enabled: true },

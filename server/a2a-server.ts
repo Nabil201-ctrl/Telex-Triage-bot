@@ -8,7 +8,6 @@ dotenv.config();
 const app = express();
 const port = Number(process.env.SERVER_PORT) || 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
@@ -52,7 +51,6 @@ function fallbackTriageAnalysis(message: string) {
 }
 
 
-// 1. Agent Discovery Endpoint (REQUIRED)
 app.get('/.well-known/agent.json', (req, res) => {
     const agentCard = {
         name: "Support Triage Agent",
@@ -106,14 +104,12 @@ app.get('/.well-known/agent.json', (req, res) => {
     res.json(agentCard);
 });
 
-// 2. Main JSON-RPC Endpoint (REQUIRED)
 app.post('/', async (req, res) => {
     try {
         const { jsonrpc, method, id, params } = req.body;
 
-        console.log('📨 Received A2A request:', { method, id });
+        console.log('Received A2A request:', { method, id });
 
-        // Validate JSON-RPC 2.0
         if (jsonrpc !== '2.0') {
             return res.json({
                 jsonrpc: '2.0',
@@ -122,7 +118,6 @@ app.post('/', async (req, res) => {
             });
         }
 
-        // Route methods
         let result;
         switch (method) {
             case 'message/send':
@@ -139,7 +134,7 @@ app.post('/', async (req, res) => {
                 });
         }
 
-        console.log('✅ Sending A2A response');
+        console.log('Sending A2A response');
         res.json({
             jsonrpc: '2.0',
             id,
@@ -147,7 +142,7 @@ app.post('/', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ A2A error:', error);
+        console.error('A2A error:', error);
         res.json({
             jsonrpc: '2.0',
             id: req.body.id,
@@ -156,17 +151,14 @@ app.post('/', async (req, res) => {
     }
 });
 
-// Message handler
 async function handleMessageSend(params: any) {
     const { message } = params;
 
-    // Extract text content
     const textPart = message.parts?.find((part: any) => part.kind === 'text');
     const userMessage = textPart?.text || '';
 
     console.log('Processing message:', userMessage);
 
-    // Your triage logic
     let triageResult;
     try {
         const agent = mastra.getAgent('supportTriageAgent');
@@ -182,7 +174,6 @@ async function handleMessageSend(params: any) {
         triageResult = fallbackTriageAnalysis(userMessage);
     }
 
-    // A2A Message response
     return {
         role: "agent",
         parts: [
@@ -198,7 +189,6 @@ async function handleMessageSend(params: any) {
     };
 }
 
-// Tasks handler (minimal implementation)
 async function handleTasksGet(params: any) {
     return {
         id: params.taskId,
@@ -209,13 +199,12 @@ async function handleTasksGet(params: any) {
     };
 }
 
-// Keep your existing health checks
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 app.listen(port, '0.0.0.0', () => {
-    console.log(`🚀 A2A Server running on port ${port}`);
-    console.log(`🔍 Discovery: http://localhost:${port}/.well-known/agent.json`);
-    console.log(`📨 Endpoint: http://localhost:${port}/`);
+    console.log(`A2A Server running on port ${port}`);
+    console.log(`Discovery: http://localhost:${port}/.well-known/agent.json`);
+    console.log(`Endpoint: http://localhost:${port}/`);
 });
