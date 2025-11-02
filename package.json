@@ -1,21 +1,26 @@
 {
   "name": "telex",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Triborg Support Triage Agent",
+  "type": "module",
   "scripts": {
-    "dev": "tsx server/a2a-server.ts",
-    "build": "tsc",
-    "start": "node dist/server/a2a-server.js"
-  }
-,
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "engines": {
-    "node": ">=20.9.0"
+    "dev": "mastra dev",
+    "build": "mastra build",
+    "start": "mastra start",
+    "deploy": "mastra deploy"
   },
+  "keywords": [
+    "telex",
+    "mastra",
+    "a2a",
+    "support",
+    "triage"
+  ],
+"author": "Abubakar Nabil",
+"license": "ISC",
+"engines": {
+  "node": ">=20.9.0"
+},
   "dependencies": {
     "@ai-sdk/openai": "^2.0.59",
     "@mastra/core": "^0.23.3",

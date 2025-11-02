@@ -5,7 +5,6 @@ import { supportTools } from '../tools/support-tool';
 import { scorers } from '../scorers/support-scorer';
 import { openai } from '@ai-sdk/openai';
 
-// Use OpenAI directly without fallback for now
 export const supportTriageAgent = new Agent({
   name: 'Support Triage Agent',
   instructions: `
@@ -36,6 +35,7 @@ export const supportTriageAgent = new Agent({
     - Return ONLY the JSON object, no markdown, no code blocks, no additional text
     - Make sure the JSON is valid and parseable
     - Include all keywords you find in the message
+    - If unsure, default to medium priority
   `,
   model: openai('gpt-3.5-turbo'),
   tools: { supportTools },

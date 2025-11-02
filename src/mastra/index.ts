@@ -8,8 +8,6 @@ import { supportTriageAgent } from './agents/support-triage-agent';
 import { supportWorkflow } from './workflows/support-workflow';
 import { scorers as supportScorers } from './scorers/support-scorer';
 
-// Make sure this import runs AFTER Mastra is defined
-import('../../server/a2a-server').catch(console.error);
 
 export const mastra = new Mastra({
   workflows: {
