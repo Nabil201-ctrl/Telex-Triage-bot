@@ -5,6 +5,8 @@ import { supportTriageAgent } from './agents/support-triage-agent';
 import { supportWorkflow } from './workflows/support-workflow';
 import { scorers as supportScorers } from './scorers/support-scorer';
 import('../../server/a2a-server').catch(console.error);
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Fix for telemetry warning
 export const mastra = new Mastra({
@@ -20,7 +22,7 @@ export const mastra = new Mastra({
   storage: new LibSQLStore({
     // Use absolute path or ensure directory exists
     url: process.env.NODE_ENV === 'production'
-      ? process.env.DATABASE_URL!
+      ? process.env.LIBSQL_URL!
       : 'file:./mastra.db', // Simplified path
   }),
   logger: new PinoLogger({
