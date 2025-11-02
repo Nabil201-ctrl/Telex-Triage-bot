@@ -2,7 +2,7 @@
     "compilerOptions": {
         "target": "ES2022",
         "module": "ESNext",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "strict": true,
@@ -11,18 +11,15 @@
         "outDir": "./dist",
         "rootDir": "./",
         "resolveJsonModule": true,
-        "declaration": false,
-        "sourceMap": true
+        "moduleDetection": "force"
     },
     "include": [
         "src/**/*",
         "server/**/*",
-        "mastra.ts",
         "*.ts"
     ],
     "exclude": [
         "node_modules",
-        "dist",
-        "**/*.test.ts"
+        "dist"
     ]
 }

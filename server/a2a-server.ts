@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { mastra } from '../src/mastra';
+import { createWebhookHandler } from '@telex/im-webhooks';
 import dotnev from 'dotenv';
 dotnev.config();
 
@@ -53,6 +54,27 @@ function fallbackTriageAnalysis(message: string) {
 /* For LeapCell */
 app.get("/kaithhealth", (req, res) => {
     res.status(200).send("OK");
+});
+
+
+app.post('/webhook/telex-messages', async (req, res) => {
+    try {
+        const { channelId, message, userId, timestamp } = req.body;
+
+        // Forward to your A2A agent
+        const agentResponse = await fetch(`http://localhost:${port}/a2a/agent/supportTriageAgent`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                messages: [{ role: 'user', content: message }]
+            })
+        });
+
+        res.status(200).json({ status: 'processed' });
+    } catch (error) {
+        console.error('Webhook error:', error);
+        res.status(500).json({ error: 'Processing failed' });
+    }
 });
 
 // A2A Endpoint for Support Triage Agent

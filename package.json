@@ -4,12 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "mastra dev",
-    "start": "node dist/server/a2a-server.ts",
-    "server": "node --loader tsx server/a2a-server.ts",
-    "server:dev": "npx tsx server/a2a-server.ts",
-    "build:server": "tsc server/a2a-server.ts --outDir dist/server --target ES2022 --module ESNext --esModuleInterop",
+    "build": "tsc && mastra build",
+    "start": "node dist/server/a2a-server.js",
+    "server": "tsx server/a2a-server.ts",
     "clean": "rm -rf dist",
     "build:full": "npm run clean && npm run build"
   },
