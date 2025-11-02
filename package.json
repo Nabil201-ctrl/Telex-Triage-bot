@@ -6,11 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "mastra dev",
-    "build": "mastra build",
     "start": "node dist/server/a2a-server.ts",
     "server": "node --loader tsx server/a2a-server.ts",
     "server:dev": "npx tsx server/a2a-server.ts",
-    "build": "tsc"
+    "build:server": "tsc server/a2a-server.ts --outDir dist/server --target ES2022 --module ESNext --esModuleInterop",
+    "clean": "rm -rf dist",
+    "build:full": "npm run clean && npm run build"
   },
   "keywords": [],
   "author": "",
@@ -28,12 +29,14 @@
     "@mastra/memory": "^0.15.10",
     "@mastra/openai": "^1.0.1-alpha.48",
     "@openrouter/ai-sdk-provider": "^1.2.0",
+    "@types/cors": "^2.8.19",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@types/express": "^5.0.5",
     "@types/node": "^24.9.2",
     "mastra": "^0.17.7",
     "tsx": "^4.20.6",
