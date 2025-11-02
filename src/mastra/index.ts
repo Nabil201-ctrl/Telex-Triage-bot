@@ -1,29 +1,36 @@
-
 import { Mastra } from '@mastra/core/mastra';
 import { PinoLogger } from '@mastra/loggers';
 import { LibSQLStore } from '@mastra/libsql';
-import { weatherWorkflow } from './workflows/weather-workflow';
-import { weatherAgent } from './agents/weather-agent';
-import { toolCallAppropriatenessScorer, completenessScorer, translationScorer } from './scorers/weather-scorer';
+import { supportTriageAgent } from './agents/support-triage-agent';
+import { supportWorkflow } from './workflows/support-workflow';
+import { scorers as supportScorers } from './scorers/support-scorer';
+import('../../server/a2a-server').catch(console.error);
 
+// Fix for telemetry warning
 export const mastra = new Mastra({
-  workflows: { weatherWorkflow },
-  agents: { weatherAgent },
-  scorers: { toolCallAppropriatenessScorer, completenessScorer, translationScorer },
+  workflows: {
+    supportWorkflow
+  },
+  agents: {
+    supportTriageAgent
+  },
+  scorers: {
+    ...supportScorers
+  },
   storage: new LibSQLStore({
-    // stores observability, scores, ... into memory storage, if it needs to persist, change to file:../mastra.db
-    url: ":memory:",
+    // Use absolute path or ensure directory exists
+    url: process.env.NODE_ENV === 'production'
+      ? process.env.DATABASE_URL!
+      : 'file:./mastra.db', // Simplified path
   }),
   logger: new PinoLogger({
     name: 'Mastra',
-    level: 'info',
+    level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
   }),
   telemetry: {
-    // Telemetry is deprecated and will be removed in the Nov 4th release
-    enabled: false, 
+    enabled: false, // Explicitly disable telemetry
   },
   observability: {
-    // Enables DefaultExporter and CloudExporter for AI tracing
-    default: { enabled: true }, 
+    default: { enabled: true },
   },
 });
