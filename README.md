@@ -1,4 +1,4 @@
-# Support Triage Bot
+# Support Triage Bot (Triborg)
 
 This project is a "Support Triage Bot" built with TypeScript, Node.js, and the Mastra framework. Its primary purpose is to automatically analyze incoming support messages, determine their urgency, and take appropriate actions based on the priority level. The bot is designed to be integrated with the platform called Telex.im.
 
