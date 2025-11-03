@@ -1,12 +1,13 @@
 {
-  "name": "telex",
+  "name": "telex-support-triage",
   "version": "1.0.0",
-  "description": "Triborg Support Triage Agent",
+  "description": "Support Triage Agent with Mastra A2A Protocol for Telex",
+  "main": "dist/mastra.config.js",
   "type": "module",
   "scripts": {
     "dev": "mastra dev",
-    "build": "mastra build",
-    "start": "mastra start",
+    "build": "tsc && mastra build",
+    "start": "node dist/mastra.config.js",
     "deploy": "mastra deploy"
   },
   "keywords": [
@@ -16,28 +17,21 @@
     "support",
     "triage"
   ],
-"author": "Abubakar Nabil",
-"license": "ISC",
-"engines": {
-  "node": ">=20.9.0"
-},
+  "author": "Your Name",
+  "license": "ISC",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.59",
     "@mastra/core": "^0.23.3",
-    "@mastra/evals": "^0.14.2",
     "@mastra/libsql": "^0.16.1",
     "@mastra/loggers": "^0.10.18",
     "@mastra/memory": "^0.15.10",
-    "@mastra/openai": "^1.0.1-alpha.48",
-    "@openrouter/ai-sdk-provider": "^1.2.0",
-    "@types/cors": "^2.8.19",
-    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "express": "^5.1.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@types/express": "^5.0.5",
     "@types/node": "^24.9.2",
     "mastra": "^0.17.7",
     "tsx": "^4.20.6",

@@ -1,3 +1,4 @@
+// src/routes/a2a-agent-route.ts
 import { registerApiRoute } from '@mastra/core/server';
 import { randomUUID } from 'crypto';
 
@@ -17,7 +18,7 @@ type A2APart = A2ATextPart | A2ADataPart;
 interface A2AArtifact {
     artifactId: string;
     name: string;
-    parts: A2ATextPart[]; // Only text parts for consistency
+    parts: A2APart[];
 }
 
 export const a2aAgentRoute = registerApiRoute('/a2a/agent/:agentId', {
@@ -66,7 +67,7 @@ export const a2aAgentRoute = registerApiRoute('/a2a/agent/:agentId', {
             }
 
             // Convert A2A messages to Mastra format
-            const mastraMessages = messagesList.map((msg) => ({
+            const mastraMessages = messagesList.map((msg: any) => ({
                 role: msg.role,
                 content: msg.parts?.map((part: A2APart) => {
                     if (part.kind === 'text') return part.text;
@@ -79,7 +80,7 @@ export const a2aAgentRoute = registerApiRoute('/a2a/agent/:agentId', {
             const response = await agent.generate(mastraMessages);
             const agentText = response.text || '';
 
-            // Build artifacts array - Type safe
+            // Build artifacts array
             const artifacts: A2AArtifact[] = [
                 {
                     artifactId: randomUUID(),
@@ -88,21 +89,21 @@ export const a2aAgentRoute = registerApiRoute('/a2a/agent/:agentId', {
                 }
             ];
 
-            // Add tool results as text artifacts
+            // Add tool results as artifacts
             if (response.toolResults && response.toolResults.length > 0) {
                 artifacts.push({
                     artifactId: randomUUID(),
                     name: 'ToolResults',
-                    parts: [{
-                        kind: 'text',
-                        text: JSON.stringify(response.toolResults, null, 2)
-                    }]
+                    parts: response.toolResults.map((result: any) => ({
+                        kind: 'data',
+                        data: result
+                    }))
                 });
             }
 
             // Build conversation history
             const history = [
-                ...messagesList.map((msg) => ({
+                ...messagesList.map((msg: any) => ({
                     kind: 'message',
                     role: msg.role,
                     parts: msg.parts,

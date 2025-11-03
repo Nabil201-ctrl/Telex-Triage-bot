@@ -1,12 +1,27 @@
 {
-    "id": "triborg_agent",
-    "name": "Triborg AI Agent",
-    "parameters": {},
-    "position": [
-        800,
-        200
+    "active": true,
+    "category": "support",
+    "description": "A workflow that triages support messages by urgency and priority",
+    "id": "support_triage_workflow",
+    "name": "Support Triage Agent",
+    "long_description": "You are a support triage assistant that analyzes incoming support messages for urgency. You classify messages as low, medium, or high priority based on keywords and context, and suggest appropriate actions for each priority level.",
+    "short_description": "Automatically triage support messages by urgency",
+    "nodes": [
+        {
+            "id": "support_triage_agent",
+            "name": "Support Triage Agent",
+            "parameters": {},
+            "position": [
+                816,
+                -112
+            ],
+            "type": "a2a/mastra-a2a-node",
+            "typeVersion": 1,
+            "url": "https://your-deployment.mastra.cloud/a2a/agent/supportTriageAgent"
+        }
     ],
-    "type": "a2a/mastra-a2a-node",
-    "typeVersion": 1,
-    "url": "https://telex-triage-bot-1.onrender.com/a2a/agent/supportTriageAgent"
+    "pinData": {},
+    "settings": {
+        "executionOrder": "v1"
+    }
 }

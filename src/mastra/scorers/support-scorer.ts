@@ -1,15 +1,15 @@
+// src/scorers/support-scorer.ts
 import { z } from 'zod';
 import { createScorer } from '@mastra/core/scores';
 import { openai } from '@ai-sdk/openai';
 
-// Simple scorer for tool usage
 export const urgencyAccuracyScorer = createScorer({
   name: 'Urgency Accuracy',
-  description: 'Evaluates if agent correctly uses tools for urgency detection',
+  description: 'Evaluates if agent correctly identifies urgency in support messages',
   type: 'agent',
   judge: {
     model: openai('gpt-3.5-turbo'),
-    instructions: 'Evaluate if the agent correctly identified urgency in the support message.',
+    instructions: 'Evaluate if the agent correctly identified urgency and priority in the support message based on the content and context.',
   },
 })
   .preprocess(({ run }) => {
@@ -21,43 +21,59 @@ export const urgencyAccuracyScorer = createScorer({
     description: 'Check urgency detection accuracy',
     outputSchema: z.object({
       correctUrgency: z.boolean(),
+      correctPriority: z.boolean(),
       confidence: z.number().min(0).max(1),
       explanation: z.string(),
+      suggestedImprovements: z.array(z.string()),
     }),
     createPrompt: ({ results }) => `
-      Evaluate if the agent correctly assessed urgency for this support message.
+      Evaluate if the agent correctly assessed urgency and priority for this support message.
       
-      User Message:
+      USER MESSAGE:
       """
       ${results.preprocessStepResult.userText}
       """
       
-      Agent Response:
+      AGENT RESPONSE:
       """
       ${results.preprocessStepResult.assistantText}
       """
       
+      PRIORITY GUIDELINES:
+      - HIGH: System failures, crashes, emergencies, critical errors
+      - MEDIUM: Functional issues, problems, questions needing assistance
+      - LOW: Feature requests, suggestions, general inquiries
+      
+      Evaluate based on:
+      1. Whether urgency assessment matches message severity
+      2. Whether priority level is appropriate
+      3. Whether keywords were properly identified
+      4. Whether suggested actions match the priority
+      
       Return JSON with:
       {
-        "correctUrgency": boolean,
-        "confidence": number (0-1),
-        "explanation": string
+        "correctUrgency": boolean (does urgency flag match content?),
+        "correctPriority": boolean (is priority level appropriate?),
+        "confidence": number 0-1 (confidence in evaluation),
+        "explanation": string (detailed reasoning),
+        "suggestedImprovements": string[] (suggestions for better assessment)
       }
     `,
   })
   .generateScore(({ results }) => {
     const analysis = (results as any)?.analyzeStepResult || {};
-    return analysis.confidence || 0.5;
+    const urgencyScore = analysis.correctUrgency ? 1 : 0;
+    const priorityScore = analysis.correctPriority ? 1 : 0;
+    return (urgencyScore + priorityScore) / 2;
   });
 
-// Scorer for response format compliance
 export const responseFormatScorer = createScorer({
   name: 'Response Format Compliance',
   description: 'Evaluates if the agent response follows the required JSON format',
   type: 'agent',
   judge: {
     model: openai('gpt-3.5-turbo'),
-    instructions: 'Evaluate if the agent response follows the required JSON format with all necessary fields.',
+    instructions: 'Evaluate if the agent response follows the required JSON format with all necessary fields and valid structure.',
   },
 })
   .preprocess(({ run }) => {
@@ -70,17 +86,19 @@ export const responseFormatScorer = createScorer({
       hasValidJson: z.boolean(),
       hasAllRequiredFields: z.boolean(),
       missingFields: z.array(z.string()),
+      hasExtraFields: z.boolean(),
       formatScore: z.number().min(0).max(1),
+      validationErrors: z.array(z.string()),
     }),
     createPrompt: ({ results }) => `
       Evaluate if this agent response follows the required JSON format:
       
-      Response:
+      RESPONSE:
       """
       ${results.preprocessStepResult.assistantText}
       """
       
-      Required JSON format:
+      REQUIRED JSON FORMAT:
       {
         "needs_urgent_triage": boolean,
         "priority_level": "low" | "medium" | "high", 
@@ -89,12 +107,21 @@ export const responseFormatScorer = createScorer({
         "keywords_found": string[]
       }
       
+      Check for:
+      1. Valid JSON syntax
+      2. All required fields present
+      3. Correct data types
+      4. No extra fields
+      5. Valid enum values for priority_level
+      
       Return JSON with:
       {
         "hasValidJson": boolean,
         "hasAllRequiredFields": boolean, 
         "missingFields": string[],
-        "formatScore": number (0-1, 1=perfect)
+        "hasExtraFields": boolean,
+        "formatScore": number (0-1, 1=perfect),
+        "validationErrors": string[]
       }
     `,
   })
